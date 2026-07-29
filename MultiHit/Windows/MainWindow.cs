@@ -28,14 +28,14 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (ImGui.Button("Show Settings"))
+        if (ImGui.Button("顯示設定"))
         {
             this.Plugin.DrawConfigUI();
         }
 
         ImGui.Spacing();
 
-        ImGui.Text("Hello, world");
+        ImGui.Text("依照技能動畫，將傷害浮動文字拆分為多段顯示。");
         ImGui.Indent(55);
         ImGui.Unindent(55);
     }

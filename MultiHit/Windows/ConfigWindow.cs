@@ -26,7 +26,7 @@ public class ConfigWindow : Window, IDisposable
     private string _lastExportDirectory = ".";
 
     public ConfigWindow(Plugin plugin) : base(
-        "MultiHit Configuration Window")
+        "MultiHit 設定")
     {
         this.Size = new Vector2(700, 500);
         this.SizeCondition = ImGuiCond.FirstUseEver;
@@ -39,12 +39,12 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        if (ImGui.Checkbox("Enabled", ref Configuration.Enabled))
+        if (ImGui.Checkbox("啟用", ref Configuration.Enabled))
         {
             this.Configuration.Save();
         }
         ImGui.SameLine();
-        if (ImGui.Button("Export"))
+        if (ImGui.Button("匯出"))
         {
             if (_dialogOpen)
             {
@@ -57,7 +57,7 @@ public class ConfigWindow : Window, IDisposable
                 // otherwise the current mod directory, otherwise the current application directory.
                 var startDir = _lastExportDirectory ?? ".";
 
-                _dialogManager.OpenFolderDialog("Export", (b, s) =>
+                _dialogManager.OpenFolderDialog("選擇匯出資料夾", (b, s) =>
                 {
                     Plugin.ExportGroups(s);
                     _lastExportDirectory = s;
@@ -67,7 +67,7 @@ public class ConfigWindow : Window, IDisposable
             }
         }
         ImGui.SameLine();
-        if (ImGui.Button("Import"))
+        if (ImGui.Button("匯入"))
         {
             if (_dialogOpen)
             {
@@ -80,7 +80,7 @@ public class ConfigWindow : Window, IDisposable
                 // otherwise the current mod directory, otherwise the current application directory.
                 var startDir = ".";
 
-                _dialogManager.OpenFileDialog("Import", ".json", (b, strs) =>
+                _dialogManager.OpenFileDialog("選擇要匯入的設定", ".json", (b, strs) =>
                 {
                     foreach (var s in strs)
                     {
@@ -94,9 +94,9 @@ public class ConfigWindow : Window, IDisposable
         ImGui.SameLine();
         if(Configuration.changed)
         {
-            var applyText = "Apply Changes";
+            var applyText = "套用變更";
             var nextPos = ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(applyText).X - 20;
-            var validateText = "Validate Groups";
+            var validateText = "驗證群組";
             nextPos = nextPos - ImGui.CalcTextSize(validateText).X - 30;
             ImGui.SetCursorPosX(nextPos);
             if (ImGui.Checkbox(validateText, ref Configuration.validateActionGroups))
@@ -104,7 +104,7 @@ public class ConfigWindow : Window, IDisposable
             }
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Whether to validate the sum of action percentage does not exceed 100%%");
+                ImGui.SetTooltip("驗證技能各段傷害百分比的總和不超過 100%%");
             }
             ImGui.SameLine();
             if (ImGui.Button(applyText))
@@ -159,7 +159,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 if (ImGui.BeginPopupContextItem($"NewActionPopup##Group{groupIdx}"))
                 {
-                    if (ImGui.BeginMenu("Add new action"))
+                    if (ImGui.BeginMenu("新增技能"))
                     {
                         ImGui.SetNextItemWidth(200);
                         ImGui.InputText("##Filter", ref addActionFilterText, 128);
@@ -187,17 +187,17 @@ public class ConfigWindow : Window, IDisposable
                         }
                         ImGui.EndMenu();
                     }
-                    if (ImGui.Selectable("Enable"))
+                    if (ImGui.Selectable("啟用"))
                     {
                         group.enabled = true;
                         Configuration.Save();
                     }
-                    if (ImGui.Selectable("Disable"))
+                    if (ImGui.Selectable("停用"))
                     {
                         group.enabled = false;
                         Configuration.Save();
                     }
-                    if (ImGui.BeginMenu("Edit Name"))
+                    if (ImGui.BeginMenu("編輯名稱"))
                     {
                         var name = editGroupNameText == "" ? group.name : editGroupNameText;
                         if (ImGui.InputText("##EditGroupPopupNameEdit", ref name, 64))
@@ -207,7 +207,7 @@ public class ConfigWindow : Window, IDisposable
                                 editGroupNameText = name;
                             }
                         }
-                        if (ImGui.Button("Save"))
+                        if (ImGui.Button("儲存"))
                         {
                             group.name = editGroupNameText;
                             editGroupNameText = "";
@@ -216,7 +216,7 @@ public class ConfigWindow : Window, IDisposable
                         }
                         ImGui.EndMenu();
                     }
-                    if (ImGui.Selectable("Export"))
+                    if (ImGui.Selectable("匯出"))
                     {
                         if (_dialogOpen)
                         {
@@ -227,7 +227,7 @@ public class ConfigWindow : Window, IDisposable
                         {
                             var startDir = _lastExportDirectory ?? ".";
                             var tempGroup = group;
-                            _dialogManager.OpenFolderDialog("Export", (b, s) =>
+                            _dialogManager.OpenFolderDialog("選擇匯出資料夾", (b, s) =>
                             {
                                 Plugin.ExportGroup(s, tempGroup);
                                 _lastExportDirectory = s;
@@ -237,7 +237,7 @@ public class ConfigWindow : Window, IDisposable
                         }
                         Plugin.Log.Debug($"Exporting group#{groupIdx}");
                     }
-                    if (ImGui.Selectable("Delete"))
+                    if (ImGui.Selectable("刪除"))
                     {
                         groupToDeleteIdx = groupIdx;
                         Plugin.Log.Debug($"To delete group#{groupIdx}");
@@ -264,17 +264,17 @@ public class ConfigWindow : Window, IDisposable
                             }
                             if (ImGui.BeginPopupContextItem($"OperationPopup##Group{groupIdx}action{actionIdx}"))
                             {
-                                if (ImGui.Selectable("Enable"))
+                                if (ImGui.Selectable("啟用"))
                                 {
                                     action.enabled = true;
                                     Configuration.Save();
                                 }
-                                if (ImGui.Selectable("Disable"))
+                                if (ImGui.Selectable("停用"))
                                 {
                                     action.enabled = false;
                                     Configuration.Save();
                                 }
-                                if (ImGui.Selectable("Delete"))
+                                if (ImGui.Selectable("刪除"))
                                 {
                                     actionToDeleteIdx = actionIdx;
                                     Plugin.Log.Debug($"To delete action {action}");
@@ -309,14 +309,14 @@ public class ConfigWindow : Window, IDisposable
             }
             ImGui.EndChild();
         }
-        if (ImGui.Button("Add Group"))
+        if (ImGui.Button("新增群組"))
         {
             ImGui.OpenPopup("Add Group Popup");
         }
         if (ImGui.BeginPopup("Add Group Popup"))
         {
             var len = Configuration.actionGroups.Count;
-            var defaultName = $"Group {len + 1}";
+            var defaultName = $"群組 {len + 1}";
             var name = addGroupNameText == "" ? defaultName : addGroupNameText;
             if (ImGui.InputText("##AddGroupPopupNameEdit", ref name, 64))
             {
@@ -325,7 +325,7 @@ public class ConfigWindow : Window, IDisposable
                     addGroupNameText = name;
                 }
             }
-            if (ImGui.Button("Add"))
+            if (ImGui.Button("新增"))
             {
                 addGroupNameText = "";
                 Configuration.actionGroups.Add(new ActionGroup(name));
@@ -339,7 +339,7 @@ public class ConfigWindow : Window, IDisposable
     {
         if(selectedGroupIdx == -1 || selectedActionIdx == -1)
         {
-            var hintText = "Please select action";
+            var hintText = "請選擇技能";
             ImGui.SetCursorPosX((ImGui.GetWindowSize().X - ImGui.CalcTextSize(hintText).X) * 0.5f);
             ImGui.Text(hintText);
             return;
@@ -350,43 +350,43 @@ public class ConfigWindow : Window, IDisposable
         ImGui.Spacing();
         ImGui.SetCursorPosX((ImGui.GetWindowSize().X - ImGui.CalcTextSize(titleText).X) * 0.5f);
         ImGui.Text(titleText);
-        if(ImGui.Checkbox("Enabled", ref action.enabled))
+        if(ImGui.Checkbox("啟用", ref action.enabled))
         {
             Configuration.Save();
         }
-        if (ImGui.Checkbox("Interruptible", ref action.interruptible))
+        if (ImGui.Checkbox("可被中斷", ref action.interruptible))
         {
             Configuration.Save();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Whether other animation can interrupt the upcoming flytext.");
+            ImGui.SetTooltip("其他動畫是否能中斷接下來的浮動文字。");
         }
         ImGui.SameLine();
-        if (ImGui.Checkbox("Show Hit", ref action.showHit))
+        if (ImGui.Checkbox("顯示段數", ref action.showHit))
         {
             Configuration.Save();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Whether to show the Hit#i in flytext.");
+            ImGui.SetTooltip("是否在浮動文字中顯示「第 i 段」。");
         }
-        if (ImGui.Checkbox("Show Final", ref action.showFinal))
+        if (ImGui.Checkbox("顯示最終傷害", ref action.showFinal))
         {
             Configuration.Save();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Whether to show the original hit as final hit.");
+            ImGui.SetTooltip("是否將原始傷害顯示為最終傷害。");
         }
         if (action.showFinal)
         {
             int delay = (int)action.finalHit.time;
             ImGui.SameLine();
-            ImGui.Text("Delay: ");
+            ImGui.Text("延遲：");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Delay the final hit (after the last hit).");
+                ImGui.SetTooltip("延遲顯示最終傷害（在最後一段之後）。");
             }
             ImGui.SameLine();
             ImGui.SetNextItemWidth(100);
@@ -399,7 +399,7 @@ public class ConfigWindow : Window, IDisposable
             }
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("30 = 1 second");
+                ImGui.SetTooltip("30 = 1 秒");
             }
             ImGui.SameLine();
             var uintCol = action.finalHit.color;
@@ -415,13 +415,13 @@ public class ConfigWindow : Window, IDisposable
                 Configuration.Save();
             }
         }
-        if (ImGui.Checkbox("Custom Name", ref action.hasCustomName))
+        if (ImGui.Checkbox("自訂名稱", ref action.hasCustomName))
         {
             Configuration.Save();
         }
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("Customize action names in flytext.");
+            ImGui.SetTooltip("自訂浮動文字中的技能名稱。");
         }
         if (action.hasCustomName)
         {
@@ -433,7 +433,7 @@ public class ConfigWindow : Window, IDisposable
                 Configuration.Save();
             }
         }
-        if (ImGui.Button("Add Hit"))
+        if (ImGui.Button("新增一段"))
         {
             if (action.hitList.Count < 100)
             {
@@ -442,7 +442,7 @@ public class ConfigWindow : Window, IDisposable
             }
         }
         ImGui.SameLine();
-        if (ImGui.Button("Clear"))
+        if (ImGui.Button("全部清除"))
         {
             action.hitList.Clear();
             Configuration.Save();
@@ -458,10 +458,10 @@ public class ConfigWindow : Window, IDisposable
             for (int hitIdx = 0; hitIdx < action.hitList.Count; hitIdx++)
             {
                 ref var hit = ref hitList[hitIdx];
-                ImGui.Text($"Hit {hitIdx + 1, 3}: ");
+                ImGui.Text($"第 {hitIdx + 1, 3} 段：");
                 ImGui.SameLine();
                 int pct = hit.percent;
-                ImGui.Text("Percentage: "); ImGui.SameLine();
+                ImGui.Text("百分比："); ImGui.SameLine();
                 ImGui.SetNextItemWidth(120);
                 if (ImGui.InputInt($"##PercentageHit_{hitIdx}", ref pct, 1, 5))
                 {
@@ -472,7 +472,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 ImGui.SameLine();
                 int delay = (int)hit.time;
-                ImGui.Text("Delay: "); ImGui.SameLine();
+                ImGui.Text("延遲："); ImGui.SameLine();
                 ImGui.SetNextItemWidth(100);
                 if (ImGui.InputInt($"##DelayHit_{hitIdx}", ref delay, 1, 5))
                 {
@@ -483,7 +483,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    ImGui.SetTooltip("30 = 1 second");
+                    ImGui.SetTooltip("30 = 1 秒");
                 }
                 ImGui.SameLine();
                 var uintCol = hit.color;
@@ -500,7 +500,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 if (ImGui.BeginPopupContextItem($"ApplyColor##{hitIdx}"))
                 {
-                    if (ImGui.Selectable("Apply to all hits"))
+                    if (ImGui.Selectable("套用至所有段數"))
                     {
                         hitIdxToBeColored = hitIdx;
                         hitColorToBeColored = uintCol;
@@ -509,7 +509,7 @@ public class ConfigWindow : Window, IDisposable
                 }
                 if (ImGui.IsItemHovered())
                 {
-                    ImGui.SetTooltip("Custom colors only work when alpha is not 0.");
+                    ImGui.SetTooltip("Alpha 不為 0 時才會套用自訂顏色。");
                 }
 
                 ImGui.SameLine();

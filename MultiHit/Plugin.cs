@@ -124,7 +124,7 @@ namespace MultiHit
 
             CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
-                HelpMessage = "Open MultiHit window."
+                HelpMessage = "開啟 MultiHit 設定視窗。"
             });
 
             try
